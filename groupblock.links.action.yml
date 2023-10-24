@@ -1,0 +1,11 @@
+group_content.group_block_relate_page:
+  route_name: 'entity.group_content.group_block_relate_page'
+  title: 'Relate block'
+  appears_on:
+    - 'view.group_block.page_1'
+
+group_content.group_block_add_page:
+  route_name: 'entity.group_content.group_block_add_page'
+  title: 'Create block'
+  appears_on:
+    - 'view.group_block.page_1'

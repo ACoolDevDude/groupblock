@@ -1,0 +1,22 @@
+{
+  "name": "drupal/groupblock",
+  "type": "drupal-module",
+  "description": "This module allows you to integrate block entity into group functionality",
+  "homepage": "http://drupal.org/project/groupblock",
+  "authors": [
+    {
+      "name": "Josh Fabean",
+      "homepage": "https://www.drupal.org/u/josh.fabean",
+      "role": "Maintainer"
+    }
+  ],
+  "support": {
+    "issues": "https://drupal.org/project/issues/groupblock",
+    "source": "https://git.drupalcode.org/project/groupblock"
+  },
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": {
+    "drupal/group": "^1.2"
+  }
+}

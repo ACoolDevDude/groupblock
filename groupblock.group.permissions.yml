@@ -1,0 +1,3 @@
+access group_block overview:
+  title: 'Access group block overview'
+  description: 'Access the overview of all group block, regardless of block bundle'

@@ -1,0 +1,53 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_form_alter().
+ */
+function groupblock_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_state->get('group_wizard_id') == 'group_entity') {
+    $wizard = $form_state->get('group_wizard');
+    foreach (Element::children($form['actions']) as $name) {
+      if (!$wizard) {
+        $form['actions'][$name]['#submit'][] = 'groupblock_content_entity_submit';
+      }
+    }
+  }
+}
+
+/**
+ * Adds a newly saved entity to a group.
+ *
+ * @see groupblock_form_alter()
+ * @see \Drupal\group\Entity\Controller\GroupContentController::createForm()
+ */
+function groupblock_content_entity_submit($form, FormStateInterface $form_state) {
+  /* @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $form_state->get('group');
+  // Get the list of installed group content instance IDs.
+  $group_content_instance_ids = \Drupal::service('plugin.manager.group_content_enabler')
+    ->getInstalled()
+    ->getInstanceIds();
+
+  /* @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+  $entity = $form_state->getFormObject()->getEntity();
+  // Loop through all fields on the entity.
+  foreach ($entity->getFieldDefinitions() as $key => $field) {
+    // Check if the field is an entity reference, referencing media entities,
+    // and retriever the media entity.
+    if (
+      $field->getType() == 'entity_reference' &&
+      $field->getSetting('target_type') == 'block' &&
+      $block = $entity->get($key)->entity) {
+      // Build the instance ID.
+      $instance_id = 'group_block:' . $block->bundle();
+      // Check if this block type should be group content or not.
+      if (in_array($instance_id, $group_content_instance_ids)) {
+        // Add this block as group content.
+        $group->addContent($block, $instance_id);
+      }
+    }
+  }
+}
