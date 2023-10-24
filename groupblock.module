@@ -27,7 +27,7 @@ function groupblock_content_entity_submit($form, FormStateInterface $form_state)
   /* @var \Drupal\group\Entity\GroupInterface $group */
   $group = $form_state->get('group');
   // Get the list of installed group content instance IDs.
-  $group_content_instance_ids = \Drupal::service('plugin.manager.group_content_enabler')
+  $group_content_instance_ids = \Drupal::service('group_relation_type.manager')
     ->getInstalled()
     ->getInstanceIds();
 

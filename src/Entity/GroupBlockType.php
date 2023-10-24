@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\groupblock\Plugin\GroupConfigEnabler;
+namespace Drupal\groupblock\Plugin\Entity;
 
-use Drupal\group\Plugin\GroupConfigEnablerBase;
+use Drupal\group\Entity\GroupRelationshipType;
 
 /**
  * Provides a content enabler for block items.
@@ -14,4 +14,4 @@ use Drupal\group\Plugin\GroupConfigEnablerBase;
  *   entity_type_id = "block_type",
  * )
  */
-class GroupBlockType extends GroupConfigEnablerBase {}
+ class GroupBlockType extends GroupRelationshipType {}

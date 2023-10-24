@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\groupblock\Plugin;
+namespace Drupal\groupblock\Plugin\Group\RelationHandler;
 
-use Drupal\group\Plugin\GroupContentPermissionProvider;
+use Drupal\group\Plugin\Group\RelationHandlerDefault\PermissionProvider;
 
 /**
  * Provides group permissions for group_block GroupContent entities.
  */
-class GroupBlockPermissionProvider extends GroupContentPermissionProvider {
+class GroupBlockPermissionProvider extends PermissionProvider {
 
   /**
    * {@inheritdoc}

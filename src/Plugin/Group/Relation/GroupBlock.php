@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\groupblock\Plugin\GroupContentEnabler;
+namespace Drupal\groupblock\Plugin\Group\Relation;
 
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\Plugin\GroupContentEnablerBase;
+use Drupal\group\Plugin\Group\Relation\GroupRelationBase;
 use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Provides a content enabler for nodes.
  *
- * @GroupContentEnabler(
+ * @GroupRelationType(
  *   id = "group_block",
  *   label = @Translation("Group block"),
  *   description = @Translation("Adds block items to groups both publicly and privately."),
@@ -19,14 +19,14 @@ use Drupal\Core\Form\FormStateInterface;
  *   entity_access = TRUE,
  *   reference_label = @Translation("Title"),
  *   reference_description = @Translation("The title of the block to add to the group"),
- *   deriver = "Drupal\groupblock\Plugin\GroupContentEnabler\GroupBlockDeriver",
+ *   deriver = "Drupal\groupblock\Plugin\Group\Relation\GroupBlockDeriver",
  *   handlers = {
- *     "access" = "Drupal\group\Plugin\GroupContentAccessControlHandler",
- *     "permission_provider" = "Drupal\groupblock\Plugin\GroupBlockPermissionProvider",
+ *     "access" = "Drupal\group\Entity\Access\GroupRelationshipTypeAccessControlHandler",
+ *     "permission_provider" = "Drupal\groupblock\Plugin\RelationHandler\GroupBlockPermissionProvider",
  *   }
  * )
  */
-class GroupBlock extends GroupContentEnablerBase {
+class GroupBlock extends GroupRelationBase {
 
   /**
    * Retrieves the block content type this plugin supports.

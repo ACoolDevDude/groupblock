@@ -2,36 +2,42 @@
 
 namespace Drupal\groupblock\Controller;
 
-use Drupal\group\Entity\Controller\GroupContentController;
+use Drupal\group\Entity\Controller\GroupRelationshipController;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Returns responses for 'group_block' GroupContent routes.
  */
-class GroupBlockController extends GroupContentController {
+class GroupBlockController extends GroupRelationshipController {
 
   /**
    * The group content plugin manager.
    *
-   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   * @var \Drupal\group\Plugin\Group\Relation\GroupRelationTypeManager
    */
   protected $pluginManager;
+
+  /**
+   * @var \Drupal\Core\DependencyInjection\ClassResolverInterface;
+   */
+  protected $classResolver;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
-    $instance->pluginManager = $container->get('plugin.manager.group_content_enabler');
+    $instance->pluginManager = $container->get('group_relation_type.manager');
+    $instance->classResolver = $container->get('class_resolver');
     return $instance;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function addPage(GroupInterface $group, $create_mode = FALSE) {
-    $build = parent::addPage($group, $create_mode);
+  public function addPage(GroupInterface $group, $create_mode = FALSE, $base_plugin_id = 'group_block') {
+    $build = parent::addPage($group, $create_mode, $base_plugin_id);
 
     // Do not interfere with redirects.
     if (!is_array($build)) {
@@ -42,7 +48,7 @@ class GroupBlockController extends GroupContentController {
     $storage_handler = $this->entityTypeManager->getStorage('block_type');
     foreach ($this->addPageBundles($group, $create_mode) as $plugin_id => $bundle_name) {
       if (!empty($build['#bundles'][$bundle_name])) {
-        $plugin = $group->getGroupType()->getContentPlugin($plugin_id);
+        $plugin = $group->getGroupType()->getContentPlugin($plugin_id); //->getPlugin($plugin_id);
         $bundle_label = $storage_handler->load($plugin->getEntityBundle())->label();
 
         $t_args = ['%block_type' => $bundle_label];
@@ -61,7 +67,7 @@ class GroupBlockController extends GroupContentController {
   /**
    * {@inheritdoc}
    */
-  protected function addPageBundles(GroupInterface $group, $create_mode) {
+  protected function addPageBundles(GroupInterface $group, $create_mode, $base_plugin_id = 'group_block') {
     $bundles = [];
 
     // Retrieve all group_media plugins for the group's type.
@@ -76,8 +82,8 @@ class GroupBlockController extends GroupContentController {
     $storage = $this->entityTypeManager->getStorage('group_content_type');
     $properties = ['group_type' => $group->bundle(), 'content_plugin' => $plugin_ids];
     foreach ($storage->loadByProperties($properties) as $bundle => $group_content_type) {
-      /** @var \Drupal\group\Entity\GroupContentTypeInterface $group_content_type */
-      $bundles[$group_content_type->getContentPluginId()] = $bundle;
+      /** @var \Drupal\group\Entity\GroupRelationshipTypeInterface $group_content_type */
+      $bundles[$group_content_type->getPluginId()] = $bundle;
     }
 
     return $bundles;
