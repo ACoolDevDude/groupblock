@@ -9,7 +9,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Provides a content enabler for nodes.
+ * Provides a group relation type for blocks.
  *
  * @GroupRelationType(
  *   id = "group_block",
@@ -29,37 +29,6 @@ use Drupal\Core\Form\FormStateInterface;
 class GroupBlock extends GroupRelationBase {
 
   /**
-   * Retrieves the block content type this plugin supports.
-   *
-   * @return \Drupal\block_content\Entity\BlockContentType
-   *   The block content type this plugin supports.
-   */
-  protected function getBlockContentType() {
-    return BlockContentType::load($this->getEntityBundle());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getGroupOperations(GroupInterface $group) {
-    $account = \Drupal::currentUser();
-    $plugin_id = $this->getPluginId();
-    $type = $this->getEntityBundle();
-    $operations = [];
-
-    if ($group->hasPermission("create $plugin_id entity", $account)) {
-      $route_params = ['group' => $group->id(), 'plugin_id' => $plugin_id];
-      $operations["groupblock-create-$type"] = [
-        'title' => $this->t('Create @type', ['@type' => $this->getBlockType()->label()]),
-        'url' => new Url('entity.group_content.create_form', $route_params),
-        'weight' => 30,
-      ];
-    }
-
-    return $operations;
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
@@ -76,7 +45,7 @@ class GroupBlock extends GroupRelationBase {
 
     // Disable the entity cardinality field as the functionality of this module
     // relies on a cardinality of 1. We don't just hide it, though, to keep a UI
-    // that's consistent with other content enabler plugins.
+    // that's consistent with other group relations.
     $info = $this->t("This field has been disabled by the plugin to guarantee the functionality that's expected of it.");
     $form['entity_cardinality']['#disabled'] = TRUE;
     $form['entity_cardinality']['#description'] .= '<br /><em>' . $info . '</em>';
@@ -85,11 +54,42 @@ class GroupBlock extends GroupRelationBase {
   }
 
   /**
+   * Retrieves the block content type this plugin supports.
+   *
+   * @return \Drupal\block_content\Entity\BlockContentType
+   *   The block content type this plugin supports.
+   */
+  protected function getBlockContentType() {
+    return BlockContentType::load($this->getRelationType()->getEntityBundle());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getGroupOperations(GroupInterface $group) {
+    $account = \Drupal::currentUser();
+    $plugin_id = $this->getPluginId();
+    $type = $this->getRelationType()->getEntityBundle();
+    $operations = [];
+
+    if ($group->hasPermission("create $plugin_id entity", $account)) {
+      $route_params = ['group' => $group->id(), 'plugin_id' => $plugin_id];
+      $operations["groupblock-create-$type"] = [
+        'title' => $this->t('Create @type', ['@type' => \Drupal::entityTypeManager()->getDefinition($this->getRelationType()->getEntityTypeId())->getLabel()]),
+        'url' => new Url('entity.group_content.create_form', $route_params),
+        'weight' => 30,
+      ];
+    }
+
+    return $operations;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function calculateDependencies() {
     $dependencies = parent::calculateDependencies();
-    $dependencies['config'][] = 'block_content.type.' . $this->getEntityBundle();
+    $dependencies['config'][] = 'block_content.type.' . $this->getRelationType()->getEntityBundle();
     return $dependencies;
   }
 

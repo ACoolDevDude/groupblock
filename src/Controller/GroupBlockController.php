@@ -48,7 +48,7 @@ class GroupBlockController extends GroupRelationshipController {
     $storage_handler = $this->entityTypeManager->getStorage('block_type');
     foreach ($this->addPageBundles($group, $create_mode) as $plugin_id => $bundle_name) {
       if (!empty($build['#bundles'][$bundle_name])) {
-        $plugin = $group->getGroupType()->getContentPlugin($plugin_id); //->getPlugin($plugin_id);
+        $plugin = $group->getGroupType()->getPlugin($plugin_id); //->getPlugin($plugin_id);
         $bundle_label = $storage_handler->load($plugin->getEntityBundle())->label();
 
         $t_args = ['%block_type' => $bundle_label];

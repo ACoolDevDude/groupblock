@@ -3,8 +3,6 @@
 namespace Drupal\groupblock\Routing;
 
 use Drupal\block_content\Entity\BlockContentType;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider;
 use Symfony\Component\Routing\Route;
 
 /**
