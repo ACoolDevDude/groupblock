@@ -28,7 +28,7 @@ function groupblock_content_entity_submit($form, FormStateInterface $form_state)
   $group = $form_state->get('group');
   // Get the list of installed group content instance IDs.
   $group_content_instance_ids = \Drupal::service('group_relation_type.manager')
-    ->getInstalled()
+    ->getInstalled($group->getGroupType())
     ->getInstanceIds();
 
   /* @var \Drupal\Core\Entity\ContentEntityInterface $entity */
@@ -46,7 +46,7 @@ function groupblock_content_entity_submit($form, FormStateInterface $form_state)
       // Check if this block type should be group content or not.
       if (in_array($instance_id, $group_content_instance_ids)) {
         // Add this block as group content.
-        $group->addContent($block, $instance_id);
+        $group->addRelationship($block, $instance_id);
       }
     }
   }
